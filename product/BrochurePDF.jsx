@@ -1,15 +1,17 @@
-// PDF brochure generator — uses jsPDF with Roboto font for full Turkish character support
+// PDF brochure generator
+// jsPDF's built-in Helvetica font uses Latin-1 encoding and cannot render Turkish chars.
+// We transliterate Turkish characters to their closest ASCII equivalents for PDF output.
+const TR_MAP = {'ş':'s','Ş':'S','ğ':'g','Ğ':'G','ı':'i','İ':'I','ü':'u','Ü':'U','ö':'o','Ö':'O','ç':'c','Ç':'C'};
+function safePdf(str) {
+  if (!str) return '';
+  return String(str).replace(/[şŞğĞıİüÜöÖçÇ]/g, c => TR_MAP[c] || c);
+}
+
 async function generateBrochure(product, lang) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const pw = 210, ph = 297;
-
-  // Register Roboto font for Turkish character support
-  if (window.ROBOTO_FONT_B64) {
-    doc.addFileToVFS('Roboto-Regular.ttf', window.ROBOTO_FONT_B64);
-    doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-  }
-  const font = window.ROBOTO_FONT_B64 ? 'Roboto' : 'helvetica';
+  const font = 'helvetica';
 
   const hex2rgb = (h) => {
     const x = h.replace('#', '');
@@ -64,17 +66,17 @@ async function generateBrochure(product, lang) {
   // Product name
   doc.setTextColor(244, 245, 248);
   doc.setFontSize(40);
-  doc.text(product.name.split(' · ')[1] || product.code, 20, 108);
+  doc.text(safePdf(product.name.split(' · ')[1] || product.code), 20, 108);
 
   // Tagline
   doc.setFontSize(20);
   doc.setTextColor(r, g, b);
-  doc.text(product.tagline[lang], 20, 126);
+  doc.text(safePdf(product.tagline[lang]), 20, 126);
 
   // Sub description
   doc.setTextColor(184, 188, 200);
   doc.setFontSize(10);
-  const subLines = doc.splitTextToSize(product.sub[lang], pw - 110);
+  const subLines = doc.splitTextToSize(safePdf(product.sub[lang]), pw - 110);
   doc.text(subLines, 20, 142);
 
   // Panel image (right side of cover)
@@ -91,10 +93,10 @@ async function generateBrochure(product, lang) {
     doc.line(20, yy, pw - 20, yy);
     doc.setTextColor(122, 127, 142);
     doc.setFontSize(8);
-    doc.text(row[0].toUpperCase(), 20, yy + 8);
+    doc.text(safePdf(row[0].toUpperCase()), 20, yy + 8);
     doc.setTextColor(244, 245, 248);
     doc.setFontSize(13);
-    doc.text(row[1], pw - 20, yy + 8, { align: 'right' });
+    doc.text(safePdf(row[1]), pw - 20, yy + 8, { align: 'right' });
     yy += 18;
   });
 
@@ -114,7 +116,7 @@ async function generateBrochure(product, lang) {
   doc.setTextColor(r, g, b);
   doc.setFont(font, 'normal');
   doc.setFontSize(9);
-  doc.text(lang === 'tr' ? 'ÖZELLİKLER' : 'KEY FEATURES', 20, 25);
+  doc.text(lang === 'tr' ? 'OZELLIKLER' : 'KEY FEATURES', 20, 25);
 
   doc.setTextColor(244, 245, 248);
   doc.setFontSize(26);
@@ -130,10 +132,10 @@ async function generateBrochure(product, lang) {
     doc.text(`0${i + 1} / 0${product.features.length}`, 20, fy);
     doc.setTextColor(244, 245, 248);
     doc.setFontSize(14);
-    doc.text(f[lang][0], 20, fy + 9);
+    doc.text(safePdf(f[lang][0]), 20, fy + 9);
     doc.setTextColor(184, 188, 200);
     doc.setFontSize(10);
-    const lines = doc.splitTextToSize(f[lang][1], pw - 40);
+    const lines = doc.splitTextToSize(safePdf(f[lang][1]), pw - 40);
     doc.text(lines, 20, fy + 17);
     fy += 17 + lines.length * 5 + 10;
   });
@@ -153,7 +155,7 @@ async function generateBrochure(product, lang) {
   doc.setTextColor(r, g, b);
   doc.setFont(font, 'normal');
   doc.setFontSize(9);
-  doc.text(lang === 'tr' ? 'TEKNİK SPESİFİKASYONLAR' : 'TECHNICAL SPECIFICATIONS', 20, 25);
+  doc.text(lang === 'tr' ? 'TEKNIK SPESIFIKASYONLAR' : 'TECHNICAL SPECIFICATIONS', 20, 25);
   doc.setTextColor(244, 245, 248);
   doc.setFontSize(26);
   doc.text(product.code, 20, 44);
@@ -165,10 +167,10 @@ async function generateBrochure(product, lang) {
     doc.rect(20, sy - 5, pw - 40, 10, 'F');
     doc.setTextColor(122, 127, 142);
     doc.setFontSize(8);
-    doc.text(row[0].toUpperCase(), 24, sy + 1);
+    doc.text(safePdf(row[0].toUpperCase()), 24, sy + 1);
     doc.setTextColor(244, 245, 248);
     doc.setFontSize(10);
-    doc.text(row[1], pw - 24, sy + 1, { align: 'right' });
+    doc.text(safePdf(row[1]), pw - 24, sy + 1, { align: 'right' });
     sy += 11;
   });
 
@@ -177,10 +179,10 @@ async function generateBrochure(product, lang) {
   doc.line(20, appsY, pw - 20, appsY);
   doc.setTextColor(r, g, b);
   doc.setFontSize(8);
-  doc.text(lang === 'tr' ? 'ÖNERİLEN UYGULAMA ALANLARI' : 'RECOMMENDED APPLICATIONS', 20, appsY + 8);
+  doc.text(lang === 'tr' ? 'ONERILEN UYGULAMA ALANLARI' : 'RECOMMENDED APPLICATIONS', 20, appsY + 8);
   doc.setTextColor(184, 188, 200);
   doc.setFontSize(10);
-  const idealText = product.ideal[lang].join('  ·  ');
+  const idealText = safePdf(product.ideal[lang].join('  ·  '));
   const idealLines = doc.splitTextToSize(idealText, pw - 40);
   doc.text(idealLines, 20, appsY + 16);
 
