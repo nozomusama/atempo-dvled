@@ -4,12 +4,22 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Atempo DirectView LED — İndirmeler</title>
+<meta name="description" content="Atempo DirectView LED indirme merkezi — broşürler, teknik çizimler, yazılım, firmware ve ürün fotoğrafları."/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Atempo DirectView LED"/>
+<meta property="og:title" content="Atempo DirectView LED — İndirmeler"/>
+<meta property="og:description" content="Broşürler, teknik çizimler, yazılım ve firmware indirmeleri."/>
+<meta property="og:url" content="https://atempo-dvled.vercel.app/Downloads.html"/>
+<meta name="twitter:card" content="summary"/>
+<link rel="canonical" href="https://atempo-dvled.vercel.app/Downloads.html"/>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="product/robotoFont.js"></script>
 <style>
 :root {
   --bg-0:#05060A; --bg-1:#0A0C12; --bg-2:#10131C; --bg-3:#181C28;
@@ -48,6 +58,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <div id="root-loading"><div class="dot"></div></div>
 <div id="root"></div>
 <script type="text/babel" src="i18n.jsx"></script>
+<script type="text/babel" src="product/productData.jsx"></script>
+<script type="text/babel" src="product/BrochurePDF.jsx"></script>
 <script type="text/babel" src="components/Nav.jsx"></script>
 <script type="text/babel" src="components/Footer.jsx"></script>
 <script type="text/babel" src="components/WhatsApp.jsx"></script>
@@ -130,7 +142,21 @@ function DownloadsApp() {
   const [activeCat, setActiveCat] = useState('all');
   const [activeSeries, setActiveSeries] = useState('ALL');
   const [search, setSearch] = useState('');
+  const [toast, setToast] = useState('');
   const t = window.I18N[lang];
+
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(''), 3000);
+  };
+
+  const handleDownload = (d) => {
+    if (d.cat === 'brochure' && d.series !== 'ALL' && window.generateBrochure && window.PRODUCTS) {
+      window.generateBrochure(window.PRODUCTS[d.series], lang).catch(console.error);
+    } else {
+      showToast(lang === 'tr' ? 'Bu dosya yakında erişime açılacak.' : 'This file will be available soon.');
+    }
+  };
 
   const filtered = useMemo(() => {
     return DOWNLOADS_TR.filter(d => {
@@ -154,6 +180,15 @@ function DownloadsApp() {
   return (
     <div>
       <Nav lang={lang} setLang={setLang} t={t} />
+      {toast && (
+        <div style={{
+          position: 'fixed', bottom: 32, left: '50%', transform: 'translateX(-50%)',
+          background: '#1a1c28', border: '1px solid rgba(255,255,255,0.12)',
+          color: '#F4F5F8', padding: '12px 24px', borderRadius: 8, zIndex: 9999,
+          fontFamily: 'var(--font-mono)', fontSize: 13, letterSpacing: '0.04em',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+        }}>{toast}</div>
+      )}
 
       {/* Hero */}
       <section style={{
@@ -345,7 +380,7 @@ function DownloadCard({ d, meta, lang }) {
           fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.15em',
           transition: 'all 0.2s',
         }}
-        onClick={() => alert((lang === 'tr' ? 'İndirme başlıyor: ' : 'Downloading: ') + d.title)}>
+        onClick={() => handleDownload(d)}>
           <DownloadIcon />
           {lang === 'tr' ? 'İNDİR' : 'DOWNLOAD'}
         </button>

@@ -14,7 +14,7 @@ function ProductApp() {
   }, [product]);
 
   const handleDownload = () => {
-    window.generateBrochure(product, lang);
+    window.generateBrochure(product, lang).catch(console.error);
   };
 
   const handleRequestQuote = (config) => {
