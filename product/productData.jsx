@@ -59,6 +59,7 @@ const PRODUCTS = {
       ],
     },
     modW: 500, modH: 500, resW: 416, resH: 416, weightPerMod: 7.5, powerPerMod: 180,
+    images: { front: 'uploads/panel-AX-front.svg', back: 'uploads/panel-AX-back.svg', side: 'uploads/panel-AX-side.svg' },
   },
   BX: {
     code: 'BX',
@@ -119,6 +120,7 @@ const PRODUCTS = {
       ],
     },
     modW: 500, modH: 500, resW: 333, resH: 333, weightPerMod: 7.8, powerPerMod: 210,
+    images: { front: 'uploads/panel-BX-front.svg', back: 'uploads/panel-BX-back.svg', side: 'uploads/panel-BX-side.svg' },
   },
   CX: {
     code: 'CX',
@@ -179,6 +181,7 @@ const PRODUCTS = {
       ],
     },
     modW: 500, modH: 500, resW: 263, resH: 263, weightPerMod: 7.2, powerPerMod: 190,
+    images: { front: 'uploads/panel-CX-front.svg', back: 'uploads/panel-CX-back.svg', side: 'uploads/panel-CX-side.svg' },
   },
   DX: {
     code: 'DX',
@@ -239,6 +242,7 @@ const PRODUCTS = {
       ],
     },
     modW: 500, modH: 500, resW: 128, resH: 128, weightPerMod: 6.5, powerPerMod: 320,
+    images: { front: 'uploads/panel-DX-front.svg', back: 'uploads/panel-DX-back.svg', side: 'uploads/panel-DX-side.svg' },
   },
   EX: {
     code: 'EX',
@@ -299,6 +303,7 @@ const PRODUCTS = {
       ],
     },
     modW: 960, modH: 960, resW: 160, resH: 160, weightPerMod: 38, powerPerMod: 420,
+    images: { front: 'uploads/panel-EX-front.svg', back: 'uploads/panel-EX-back.svg', side: 'uploads/panel-EX-side.svg' },
   },
   FX: {
     code: 'FX',
@@ -359,6 +364,7 @@ const PRODUCTS = {
       ],
     },
     modW: 500, modH: 500, resW: 192, resH: 192, weightPerMod: 7.0, powerPerMod: 220,
+    images: { front: 'uploads/panel-FX-front.svg', back: 'uploads/panel-FX-back.svg', side: 'uploads/panel-FX-side.svg' },
   },
 };
 

@@ -1,5 +1,8 @@
 // Product Hero — series-specific with download + quote CTAs
 function ProductHero({ product, lang, pt, onDownload }) {
+  const [view, setView] = React.useState('front');
+  const views = ['front', 'back', 'side'];
+  const viewLabels = { front: 'FRONT', back: 'REAR', side: 'SIDE' };
   return (
     <section style={{
       position: 'relative',
@@ -69,32 +72,36 @@ function ProductHero({ product, lang, pt, onDownload }) {
           </div>
 
           {/* Visual */}
-          <div style={{
-            aspectRatio: '4/5',
-            background: `linear-gradient(135deg, #1a1d2a, #05060a)`,
-            border: `1px solid ${product.color}40`,
-            boxShadow: `0 20px 80px ${product.color}30`,
-            position: 'relative', overflow: 'hidden',
-          }}>
-            <div style={{ position: 'absolute', inset: '15%',
-              background: `radial-gradient(ellipse, ${product.color}50, transparent 70%)`,
-              border: `1px solid ${product.color}60`,
-              display: 'grid',
-              gridTemplateColumns: 'repeat(8, 1fr)',
-              gridTemplateRows: 'repeat(10, 1fr)',
-              gap: 1, padding: 1,
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{
+              aspectRatio: view === 'side' ? '3/5' : '4/5',
+              background: `linear-gradient(135deg, #1a1d2a, #05060a)`,
+              border: `1px solid ${product.color}40`,
+              boxShadow: `0 20px 80px ${product.color}30`,
+              position: 'relative', overflow: 'hidden',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
-              {Array.from({ length: 80 }).map((_, i) => (
-                <div key={i} style={{
-                  background: `hsla(${Math.random() * 40 + 290}, 80%, ${30 + (i % 7) * 5}%, 0.7)`,
-                }} />
+              <img
+                src={product.images[view]}
+                alt={`${product.name} ${view} view`}
+                style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+              />
+            </div>
+            {/* View switcher */}
+            <div style={{ display: 'flex', gap: 2 }}>
+              {views.map(v => (
+                <button key={v} onClick={() => setView(v)} style={{
+                  flex: 1, padding: '8px 0',
+                  fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.18em',
+                  background: 'transparent',
+                  border: `1px solid ${v === view ? product.color : product.color + '30'}`,
+                  borderBottom: `2px solid ${v === view ? product.color : 'transparent'}`,
+                  color: v === view ? product.color : 'var(--text-3)',
+                  cursor: 'pointer', transition: 'all 0.15s',
+                }}>
+                  {viewLabels[v]}
+                </button>
               ))}
-            </div>
-            <div className="mono" style={{ position: 'absolute', top: 16, left: 16, fontSize: 10, letterSpacing: '0.2em', color: product.color }}>
-              {product.code} · {product.pitchRange}
-            </div>
-            <div className="mono" style={{ position: 'absolute', bottom: 16, right: 16, fontSize: 9, letterSpacing: '0.2em', color: 'var(--text-3)' }}>
-              PRODUCT RENDER
             </div>
           </div>
         </div>
