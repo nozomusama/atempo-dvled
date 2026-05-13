@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Atempo DirectView LED — Teknik Destek</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+:root {
+  --bg-0:#05060A; --bg-1:#0A0C12; --bg-2:#10131C;
+  --line:rgba(255,255,255,0.08); --line-strong:rgba(255,255,255,0.14);
+  --text-0:#F4F5F8; --text-1:#B8BCC8; --text-2:#7A7F8E; --text-3:#4A4F5E;
+  --magenta:#E6007E; --magenta-glow:rgba(230,0,126,0.45); --cyan:#00E5FF; --success:#00D68F;
+  --font-display:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --container:1360px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-body);background:var(--bg-0);color:var(--text-0);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+::selection{background:var(--magenta);color:white;}
+::-webkit-scrollbar{width:10px;} ::-webkit-scrollbar-track{background:var(--bg-0);} ::-webkit-scrollbar-thumb{background:#2a2e3e;border-radius:5px;}
+.container{max-width:var(--container);margin:0 auto;padding:0 32px;}
+.mono{font-family:var(--font-mono);letter-spacing:0.02em;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 22px;font-size:14px;font-weight:500;border-radius:2px;transition:all 0.2s;white-space:nowrap;}
+.btn-primary{background:var(--magenta);color:white;}
+.btn-primary:hover{background:#ff1a95;box-shadow:0 8px 32px var(--magenta-glow);}
+.btn-ghost{background:transparent;color:var(--text-0);border:1px solid var(--line-strong);}
+.btn-ghost:hover{border-color:var(--text-0);background:rgba(255,255,255,0.04);}
+.display-xl{font-family:var(--font-display);font-size:clamp(40px,6vw,88px);line-height:0.95;letter-spacing:-0.035em;font-weight:500;}
+.display-l{font-family:var(--font-display);font-size:clamp(32px,4vw,56px);line-height:1.02;letter-spacing:-0.028em;font-weight:500;}
+.display-m{font-family:var(--font-display);font-size:clamp(24px,3vw,38px);line-height:1.1;letter-spacing:-0.02em;font-weight:500;}
+.eyebrow{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-2);display:inline-flex;align-items:center;gap:10px;}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--magenta);}
+@keyframes ledPulse{0%,100%{opacity:0.8;}50%{opacity:1;}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+#root-loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg-0);z-index:9999;}
+#root-loading .dot{width:8px;height:8px;border-radius:50%;background:var(--magenta);animation:ledPulse 1.2s ease-in-out infinite;}
+input,textarea,select{font-family:var(--font-body);}
+</style>
+</head>
+<body>
+<div id="root-loading"><div class="dot"></div></div>
+<div id="root"></div>
+<script type="text/babel" src="i18n.jsx"></script>
+<script type="text/babel" src="components/Nav.jsx"></script>
+<script type="text/babel" src="components/Footer.jsx"></script>
+<script type="text/babel" src="components/WhatsApp.jsx"></script>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+// ── SUPPORT FORM ──────────────────────────────────────────────────────────────
+function SupportApp() {
+  const [lang, setLang] = useState('tr');
+  const t = window.I18N[lang];
+  const [submitted, setSubmitted] = useState(false);
+
+  return (
+    <div>
+      <Nav lang={lang} setLang={setLang} t={t} />
+
+      {/* Hero */}
+      <section style={{
+        paddingTop: 72, minHeight: 380,
+        background: 'radial-gradient(ellipse 80% 60% at 50% 30%, #12141f 0%, #05060a 70%)',
+        position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'flex-end',
+      }}>
+        <div style={{ position: 'absolute', inset: 0,
+          backgroundImage: 'radial-gradient(circle at 1.5px 1.5px, rgba(0,229,255,0.15) 1.2px, transparent 1.2px)',
+          backgroundSize: '10px 10px',
+          maskImage: 'radial-gradient(ellipse 80% 60% at 50% 40%, black, transparent 70%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 40%, black, transparent 70%)',
+        }} />
+        <div style={{ position: 'absolute', top: '10%', left: '15%', width: 400, height: 400,
+          background: 'radial-gradient(circle, rgba(0,229,255,0.15), transparent 70%)', filter: 'blur(60px)' }} />
+        <div className="container" style={{ position: 'relative', zIndex: 2, paddingBottom: 64, paddingTop: 80 }}>
+          <div className="eyebrow" style={{ marginBottom: 20 }}>Atempo DirectView LED</div>
+          <h1 className="display-xl" style={{ marginBottom: 20 }}>
+            {lang === 'tr' ? <>Teknik <span style={{ color:'var(--cyan)' }}>Destek</span></> : <>Technical <span style={{ color:'var(--cyan)' }}>Support</span></>}
+          </h1>
+          <p style={{ fontSize: 18, color: 'var(--text-1)', maxWidth: 560 }}>
+            {lang === 'tr'
+              ? 'Uzman teknik ekibimiz kurulum, kalibrasyon, arıza giderme ve yazılım konularında 7/24 yanınızda.'
+              : 'Our expert technical team is available 24/7 for installation, calibration, troubleshooting and software.'}
+          </p>
+        </div>
+      </section>
+
+      {/* Quick contact channels */}
+      <ContactChannels lang={lang} />
+
+      {/* Main grid: form + contact info */}
+      <section style={{ padding: '80px 0', background: 'var(--bg-0)' }}>
+        <div className="container">
+          <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 1, border: '1px solid var(--line)', minHeight: 600 }} className="support-grid">
+            {/* Left — form */}
+            <div style={{ padding: '56px 56px', background: 'var(--bg-1)' }}>
+              {submitted ? <SuccessState lang={lang} onReset={() => setSubmitted(false)} /> : <SupportForm lang={lang} onSubmit={() => setSubmitted(true)} />}
+            </div>
+            {/* Right — contact info */}
+            <ContactInfo lang={lang} />
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <FAQ lang={lang} />
+
+      <Footer t={t} />
+      <WhatsApp lang={lang} />
+    </div>
+  );
+}
+
+// ── CONTACT CHANNELS ──────────────────────────────────────────────────────────
+function ContactChannels({ lang }) {
+  const channels = lang === 'tr' ? [
+    { icon: <PhoneIcon />, color: '#E6007E', label: 'Teknik Destek Hattı', val: '+90 212 123 45 67', sub: 'Haftaiçi 09:00–18:00', action: 'tel:+902121234567' },
+    { icon: <WhatsAppIcon />, color: '#25D366', label: 'WhatsApp', val: '+90 555 123 45 67', sub: '7/24 · Ort. 2 dk yanıt', action: 'https://wa.me/905551234567' },
+    { icon: <EmailIcon />, color: '#00E5FF', label: 'Teknik E-posta', val: 'destek@atempo.com.tr', sub: 'Maks. 4 saat yanıt', action: 'mailto:destek@atempo.com.tr' },
+    { icon: <TicketIcon />, color: '#6A5ACD', label: 'Destek Talebi', val: 'Aşağıdaki formu doldurun', sub: '24 saat içinde geri dönüş', action: '#form' },
+  ] : [
+    { icon: <PhoneIcon />, color: '#E6007E', label: 'Technical Support Line', val: '+90 212 123 45 67', sub: 'Mon–Fri 09:00–18:00', action: 'tel:+902121234567' },
+    { icon: <WhatsAppIcon />, color: '#25D366', label: 'WhatsApp', val: '+90 555 123 45 67', sub: '24/7 · Avg. 2 min reply', action: 'https://wa.me/905551234567' },
+    { icon: <EmailIcon />, color: '#00E5FF', label: 'Technical Email', val: 'support@atempo.com.tr', sub: 'Max. 4 hour response', action: 'mailto:support@atempo.com.tr' },
+    { icon: <TicketIcon />, color: '#6A5ACD', label: 'Support Ticket', val: 'Fill the form below', sub: 'Response within 24 hours', action: '#form' },
+  ];
+
+  return (
+    <div style={{ background: 'var(--bg-1)', borderBottom: '1px solid var(--line)' }}>
+      <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0 }}>
+        {channels.map((ch, i) => (
+          <a key={i} href={ch.action} style={{
+            display: 'flex', alignItems: 'center', gap: 16,
+            padding: '28px 24px',
+            borderRight: i < 3 ? '1px solid var(--line)' : 'none',
+            transition: 'background 0.2s',
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-2)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+            <div style={{ width: 44, height: 44, background: `${ch.color}18`, border: `1px solid ${ch.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: ch.color, flexShrink: 0 }}>
+              {ch.icon}
+            </div>
+            <div>
+              <div className="mono" style={{ fontSize: 10, color: 'var(--text-3)', letterSpacing: '0.15em', marginBottom: 4 }}>{ch.label}</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 500, color: 'var(--text-0)', marginBottom: 2 }}>{ch.val}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-2)' }}>{ch.sub}</div>
+            </div>
+          </a>
+        ))}
+      </div>
+      <style>{`.ch-grid { @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr) !important; } }`}</style>
+    </div>
+  );
+}
+
+// ── SUPPORT FORM ──────────────────────────────────────────────────────────────
+function SupportForm({ lang, onSubmit }) {
+  const [form, setForm] = useState({ name:'', company:'', email:'', phone:'', series:'', priority:'normal', issue:'', description:'', serialNo:'', softwareVer:'' });
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const isTr = lang === 'tr';
+
+  const inputStyle = { width:'100%', padding:'13px 16px', background:'var(--bg-2)', border:'1px solid var(--line-strong)', color:'var(--text-0)', fontSize:14, outline:'none', transition:'border-color 0.15s', borderRadius: 2 };
+  const onFocus = e => e.target.style.borderColor = 'var(--cyan)';
+  const onBlur = e => e.target.style.borderColor = 'var(--line-strong)';
+
+  const canSubmit = form.name && form.email && form.issue && form.description;
+
+  return (
+    <div id="form">
+      <div className="eyebrow" style={{ marginBottom: 20 }}>{isTr ? 'Destek Formu' : 'Support Form'}</div>
+      <h2 className="display-m" style={{ marginBottom: 32 }}>{isTr ? 'Talebinizi iletin.' : 'Submit your request.'}</h2>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
+        <Field label={isTr ? 'Ad Soyad *' : 'Full Name *'}>
+          <input style={inputStyle} value={form.name} onChange={e => set('name', e.target.value)} onFocus={onFocus} onBlur={onBlur} />
+        </Field>
+        <Field label={isTr ? 'Şirket *' : 'Company *'}>
+          <input style={inputStyle} value={form.company} onChange={e => set('company', e.target.value)} onFocus={onFocus} onBlur={onBlur} />
+        </Field>
+        <Field label={isTr ? 'E-posta *' : 'Email *'}>
+          <input type="email" style={inputStyle} value={form.email} onChange={e => set('email', e.target.value)} onFocus={onFocus} onBlur={onBlur} />
+        </Field>
+        <Field label={isTr ? 'Telefon' : 'Phone'}>
+          <input style={inputStyle} value={form.phone} onChange={e => set('phone', e.target.value)} onFocus={onFocus} onBlur={onBlur} />
+        </Field>
+        <Field label={isTr ? 'Ürün Serisi' : 'Product Series'}>
+          <select style={{ ...inputStyle, cursor: 'pointer' }} value={form.series} onChange={e => set('series', e.target.value)} onFocus={onFocus} onBlur={onBlur}>
+            <option value="">{isTr ? 'Seçin...' : 'Select...'}</option>
+            {['AX · IndoorFine','BX · Broadcast','CX · Corporate','DX · Stage','EX · Outdoor','FX · Creative'].map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </Field>
+        <Field label={isTr ? 'Öncelik' : 'Priority'}>
+          <select style={{ ...inputStyle, cursor: 'pointer' }} value={form.priority} onChange={e => set('priority', e.target.value)} onFocus={onFocus} onBlur={onBlur}>
+            <option value="low">{isTr ? 'Düşük — Bilgi talebi' : 'Low — Information request'}</option>
+            <option value="normal">{isTr ? 'Normal — Genel destek' : 'Normal — General support'}</option>
+            <option value="high">{isTr ? 'Yüksek — Sistem kısmi çalışıyor' : 'High — System partially working'}</option>
+            <option value="critical">{isTr ? '🔴 Kritik — Sistem çalışmıyor' : '🔴 Critical — System down'}</option>
+          </select>
+        </Field>
+        <Field label={isTr ? 'Seri No (varsa)' : 'Serial No (if known)'}>
+          <input style={inputStyle} value={form.serialNo} onChange={e => set('serialNo', e.target.value)} onFocus={onFocus} onBlur={onBlur} placeholder="ATMP-XXXX-XXXX" />
+        </Field>
+        <Field label={isTr ? 'Yazılım Versiyonu' : 'Software Version'}>
+          <input style={inputStyle} value={form.softwareVer} onChange={e => set('softwareVer', e.target.value)} onFocus={onFocus} onBlur={onBlur} placeholder="v5.4.2" />
+        </Field>
+        <Field label={isTr ? 'Sorun Başlığı *' : 'Issue Summary *'} style={{ gridColumn: '1 / -1' }}>
+          <input style={inputStyle} value={form.issue} onChange={e => set('issue', e.target.value)} onFocus={onFocus} onBlur={onBlur} placeholder={isTr ? 'Kısaca sorunuzu yazın...' : 'Brief description of the issue...'} />
+        </Field>
+        <Field label={isTr ? 'Detaylı Açıklama *' : 'Detailed Description *'} style={{ gridColumn: '1 / -1' }}>
+          <textarea rows="5" style={{ ...inputStyle, resize: 'vertical' }} value={form.description} onChange={e => set('description', e.target.value)} onFocus={onFocus} onBlur={onBlur} placeholder={isTr ? 'Sorunun ne zaman başladığı, hangi durumlarda oluştuğu, yapılan işlemler...' : 'When the issue started, under what conditions, steps taken...'} />
+        </Field>
+      </div>
+
+      <div style={{ marginTop: 32, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+        <p style={{ fontSize: 12, color: 'var(--text-3)', maxWidth: 360 }}>
+          {isTr ? '* Zorunlu alanlar. Tüm bilgiler gizli tutulur.' : '* Required fields. All information is kept confidential.'}
+        </p>
+        <button className="btn btn-primary" disabled={!canSubmit} onClick={onSubmit}
+          style={{ opacity: canSubmit ? 1 : 0.5, cursor: canSubmit ? 'pointer' : 'not-allowed', background: 'var(--cyan)', color: '#05060A' }}>
+          {isTr ? 'Talebi Gönder' : 'Submit Request'}
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7 L12 7 M8 3 L12 7 L8 11" stroke="currentColor" strokeWidth="1.5"/></svg>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, children, style }) {
+  return (
+    <div style={style}>
+      <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.18em', color: 'var(--text-2)', textTransform: 'uppercase', marginBottom: 10 }}>{label}</label>
+      {children}
+    </div>
+  );
+}
+
+function SuccessState({ lang, onReset }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', minHeight: 500, animation: 'fadeInUp 0.4s ease' }}>
+      <div style={{ width: 56, height: 56, background: 'var(--cyan)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 28, boxShadow: '0 0 40px rgba(0,229,255,0.4)' }}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12 L10 17 L19 8" stroke="#05060A" strokeWidth="2.5"/></svg>
+      </div>
+      <h3 className="display-m" style={{ marginBottom: 16 }}>
+        {lang === 'tr' ? <><span style={{ color: 'var(--cyan)' }}>Talebiniz alındı.</span></> : <><span style={{ color: 'var(--cyan)' }}>Request received.</span></>}
+      </h3>
+      <p style={{ fontSize: 16, color: 'var(--text-1)', lineHeight: 1.6, marginBottom: 32, maxWidth: 440 }}>
+        {lang === 'tr'
+          ? 'Teknik ekibimiz en geç 24 saat içinde — kritik talepler için 2 saat içinde — e-posta veya telefon ile dönüş yapacak.'
+          : 'Our technical team will get back to you within 24 hours — within 2 hours for critical requests — by email or phone.'}
+      </p>
+      <button className="btn btn-ghost" onClick={onReset}>{lang === 'tr' ? 'Yeni talep oluştur' : 'Submit another request'}</button>
+    </div>
+  );
+}
+
+// ── CONTACT INFO ──────────────────────────────────────────────────────────────
+function ContactInfo({ lang }) {
+  const isTr = lang === 'tr';
+  return (
+    <div style={{ background: 'var(--bg-2)', padding: '56px 48px', display: 'flex', flexDirection: 'column', gap: 40 }}>
+      <div>
+        <div className="eyebrow" style={{ marginBottom: 20 }}>{isTr ? 'İletişim Bilgileri' : 'Contact Information'}</div>
+        <h2 className="display-m" style={{ marginBottom: 28 }}>{isTr ? 'Bize ulaşın.' : 'Get in touch.'}</h2>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <ContactRow icon={<PhoneIcon />} color="#E6007E" label={isTr ? 'Teknik Destek' : 'Technical Support'} val="+90 212 123 45 67" sub={isTr ? 'Haftaiçi 09:00–18:00' : 'Weekdays 09:00–18:00'} />
+          <ContactRow icon={<PhoneIcon />} color="#E6007E" label={isTr ? 'Acil Hat' : 'Emergency Line'} val="+90 555 123 45 67" sub={isTr ? '7/24 Kritik destek' : '24/7 Critical support'} />
+          <ContactRow icon={<EmailIcon />} color="#00E5FF" label={isTr ? 'Teknik E-posta' : 'Technical Email'} val={isTr ? 'destek@atempo.com.tr' : 'support@atempo.com.tr'} sub={isTr ? 'Maks. 4 saat' : 'Max. 4 hours'} />
+          <ContactRow icon={<EmailIcon />} color="#00E5FF" label={isTr ? 'Genel İletişim' : 'General Contact'} val="info@atempo.com.tr" sub="" />
+          <ContactRow icon={<LocationIcon />} color="#6A5ACD" label={isTr ? 'Merkez Ofis' : 'Head Office'} val={isTr ? 'Barbaros Mh., Beşiktaş' : 'Barbaros Mh., Beşiktaş'} sub="İstanbul / Türkiye" />
+        </div>
+      </div>
+
+      {/* Service hours */}
+      <div style={{ borderTop: '1px solid var(--line)', paddingTop: 28 }}>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: '0.2em', color: 'var(--text-3)', marginBottom: 16 }}>{isTr ? 'SERVİS SAATLERİ' : 'SERVICE HOURS'}</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {(isTr ? [
+            ['Teknik destek hattı', 'Pzt–Cum · 09:00–18:00'],
+            ['E-posta desteği', 'Pzt–Cum · 09:00–20:00'],
+            ['Acil hat (kritik)', '7/24 · 365 gün'],
+            ['Saha servis (İstanbul)', 'Pzt–Cmt · 08:00–20:00'],
+            ['Saha servis (diğer)', 'Pzt–Cum · İlçeye göre'],
+          ] : [
+            ['Technical hotline', 'Mon–Fri · 09:00–18:00'],
+            ['Email support', 'Mon–Fri · 09:00–20:00'],
+            ['Emergency line (critical)', '24/7 · 365 days'],
+            ['On-site service (Istanbul)', 'Mon–Sat · 08:00–20:00'],
+            ['On-site service (other)', 'Mon–Fri · By region'],
+          ]).map(([k, v], i) => (
+            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, paddingBottom: 10, borderBottom: '1px solid var(--line)' }}>
+              <span style={{ color: 'var(--text-1)' }}>{k}</span>
+              <span className="mono" style={{ fontSize: 11, color: 'var(--text-0)', letterSpacing: '0.05em' }}>{v}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* SLA */}
+      <div style={{ background: 'rgba(0,229,255,0.05)', border: '1px solid rgba(0,229,255,0.2)', padding: 20 }}>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: '0.2em', color: 'var(--cyan)', marginBottom: 10 }}>{isTr ? 'SERVİS SEVİYE ANLAŞMASI' : 'SERVICE LEVEL AGREEMENT'}</div>
+        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {(isTr ? [
+            ['Kritik', '2 saat uzaktan destek, 24 saat saha'],
+            ['Yüksek', '4 saat yanıt, 48 saat çözüm'],
+            ['Normal', '24 saat yanıt, 5 iş günü çözüm'],
+          ] : [
+            ['Critical', '2h remote, 24h on-site'],
+            ['High', '4h response, 48h resolution'],
+            ['Normal', '24h response, 5 business days'],
+          ]).map(([k, v], i) => (
+            <li key={i} style={{ display: 'flex', gap: 12, fontSize: 13 }}>
+              <span style={{ color: ['#E6007E','#FFB020','#00D68F'][i], fontWeight: 600, minWidth: 56 }}>{k}</span>
+              <span style={{ color: 'var(--text-1)' }}>{v}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function ContactRow({ icon, color, label, val, sub }) {
+  return (
+    <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+      <div style={{ width: 36, height: 36, background: `${color}18`, border: `1px solid ${color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', color, flexShrink: 0, marginTop: 2 }}>{icon}</div>
+      <div>
+        <div className="mono" style={{ fontSize: 9, letterSpacing: '0.18em', color: 'var(--text-3)', marginBottom: 4, textTransform: 'uppercase' }}>{label}</div>
+        <div style={{ fontSize: 15, fontWeight: 500, color: 'var(--text-0)' }}>{val}</div>
+        {sub && <div style={{ fontSize: 12, color: 'var(--text-2)', marginTop: 2 }}>{sub}</div>}
+      </div>
+    </div>
+  );
+}
+
+// ── FAQ ────────────────────────────────────────────────────────────────────────
+function FAQ({ lang }) {
+  const isTr = lang === 'tr';
+  const [open, setOpen] = useState(null);
+  const items = isTr ? [
+    { q: 'LED panel modüllerimi nasıl güncellerim?', a: 'NovaLCT yazılımını son sürüme güncelleyin, ardından Firmware > Upgrade menüsünden ilgili seri için bin dosyasını yükleyin. Güncelleme sırasında güç kesintisi yaşanmaması için UPS kullanmanızı öneririz.' },
+    { q: 'Renk kalibrasyonu ne sıklıkla yapılmalı?', a: 'Standart kullanımda yılda bir kez yeterlidir. Broadcast ve XR stüdyolar için 6 ayda bir kalibrasyon önerilir. ColorGenie yazılımı ile otomatik kalibrasyon yapabilirsiniz.' },
+    { q: 'Bir modül arızalandığında ne yapmalıyım?', a: 'AX, BX ve DX serisi modüller ön servisle değiştirilir — arka erişim gerekmez. Garanti kapsamındaki modüller için destek talebinizi oluşturun, 48 saat içinde yedek modül gönderimi yapılır.' },
+    { q: 'Kontrol kutusu bağlantı sorununda ne kontrol etmeliyim?', a: 'Ethernet kablo bütünlüğü, IP adresi çakışması ve güvenlik duvarı ayarlarını kontrol edin. NovaLCT > Hardware Manager\'da kart durumunu doğrulayın. Sorun devam ederse hata logunu support@atempo.com.tr adresine gönderin.' },
+    { q: 'XR stüdyo kurulumunda moire problemi yaşıyorum.', a: 'Kamera shutter açısını 180° yapın, refresh rate\'i 7680 Hz\'e (BX serisi) ayarlayın. Kamera lens odak uzaklığını artırmayı deneyin. Ayrıntılı BX kamera ayar kılavuzu için broşürü indirin.' },
+    { q: 'Outdoor ekranım gece çok parlak, nasıl ayarlarım?', a: 'EX serisi auto-brightness sensörü varsayılan olarak aktiftir. Manuel ayar için NovaLCT > Screen Properties > Brightness menüsünden program tabanlı zamanlama yapabilirsiniz.' },
+  ] : [
+    { q: 'How do I update LED panel firmware?', a: 'Update NovaLCT to the latest version, then go to Firmware > Upgrade and load the .bin file for your series. We recommend using a UPS to prevent power interruption during the update.' },
+    { q: 'How often should color calibration be done?', a: 'Once a year for standard use. For broadcast and XR studios, every 6 months is recommended. Automated calibration is available with ColorGenie software.' },
+    { q: 'What should I do when a module fails?', a: 'AX, BX and DX series modules are front-serviceable — no rear access needed. For warranty-covered modules, submit a support ticket; a replacement module will be shipped within 48 hours.' },
+    { q: 'What should I check for control box connection issues?', a: 'Check Ethernet cable integrity, IP address conflicts and firewall settings. Verify card status in NovaLCT > Hardware Manager. If the issue persists, send the error log to support@atempo.com.tr.' },
+    { q: 'I\'m experiencing moire in my XR studio.', a: 'Set camera shutter angle to 180°, set refresh rate to 7680 Hz (BX series). Try increasing camera lens focal length. Download the BX camera setup guide from the brochures section.' },
+    { q: 'My outdoor display is too bright at night.', a: 'The EX series auto-brightness sensor is active by default. For manual control, use NovaLCT > Screen Properties > Brightness to create a time-based schedule.' },
+  ];
+
+  return (
+    <section style={{ padding: '80px 0', background: 'var(--bg-1)', borderTop: '1px solid var(--line)' }}>
+      <div className="container">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 48, alignItems: 'start' }} className="faq-grid">
+          <div style={{ position: 'sticky', top: 100 }}>
+            <div className="eyebrow" style={{ marginBottom: 20 }}>FAQ</div>
+            <h2 className="display-l" style={{ marginBottom: 20 }}>{isTr ? 'Sık sorulan sorular.' : 'Frequently asked questions.'}</h2>
+            <p style={{ fontSize: 15, color: 'var(--text-1)', lineHeight: 1.6, marginBottom: 24 }}>
+              {isTr ? 'Aradığınızı bulamıyorsanız destek talebini oluşturun.' : 'If you can\'t find what you\'re looking for, submit a support ticket.'}
+            </p>
+            <a href="#form" className="btn btn-ghost" style={{ fontSize: 13 }}>{isTr ? 'Destek talebi oluştur' : 'Open a support ticket'}</a>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            {items.map((it, i) => (
+              <div key={i} style={{ background: open === i ? 'var(--bg-2)' : 'transparent', border: '1px solid var(--line)', borderRadius: 2, overflow: 'hidden', transition: 'background 0.2s' }}>
+                <button onClick={() => setOpen(open === i ? null : i)} style={{
+                  width: '100%', padding: '22px 28px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
+                  textAlign: 'left',
+                }}>
+                  <span style={{ fontFamily: 'var(--font-display)', fontSize: 17, fontWeight: 500, color: open === i ? 'var(--text-0)' : 'var(--text-1)' }}>{it.q}</span>
+                  <span style={{ color: 'var(--magenta)', fontSize: 20, flexShrink: 0, transform: open === i ? 'rotate(45deg)' : 'none', transition: 'transform 0.2s' }}>+</span>
+                </button>
+                {open === i && (
+                  <div style={{ padding: '0 28px 24px', fontSize: 14, color: 'var(--text-1)', lineHeight: 1.7, animation: 'fadeInUp 0.2s ease' }}>
+                    {it.a}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <style>{`@media (max-width: 900px) { .faq-grid { grid-template-columns: 1fr !important; } .faq-grid > div:first-child { position: static !important; } }`}</style>
+    </section>
+  );
+}
+
+// ── ICONS ─────────────────────────────────────────────────────────────────────
+function PhoneIcon() { return <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 3h4l1.5 3.5-2 1.5a11 11 0 0 0 3.5 3.5l1.5-2L15 11v4a1 1 0 0 1-1 1A13 13 0 0 1 2 4a1 1 0 0 1 1-1z" stroke="currentColor" strokeWidth="1.3"/></svg>; }
+function EmailIcon() { return <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="10" rx="1" stroke="currentColor" strokeWidth="1.3"/><path d="M2 5 L9 10 L16 5" stroke="currentColor" strokeWidth="1.3"/></svg>; }
+function WhatsAppIcon() { return <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.5" stroke="currentColor" strokeWidth="1.3"/><path d="M6 9.5c1 2 3.5 3 5.5 2l.5 1.5-2 .5A7 7 0 0 1 5.5 9l.5-2 1.5.5L6 9.5z" stroke="currentColor" strokeWidth="1"/></svg>; }
+function TicketIcon() { return <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="10" rx="1" stroke="currentColor" strokeWidth="1.3"/><path d="M6 8 L12 8 M6 11 L10 11" stroke="currentColor" strokeWidth="1.3"/></svg>; }
+function LocationIcon() { return <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2a5 5 0 0 1 5 5c0 4-5 9-5 9S4 11 4 7a5 5 0 0 1 5-5z" stroke="currentColor" strokeWidth="1.3"/><circle cx="9" cy="7" r="1.5" fill="currentColor"/></svg>; }
+
+const loader = document.getElementById('root-loading');
+if (loader) loader.remove();
+ReactDOM.createRoot(document.getElementById('root')).render(<SupportApp />);
+</script>
+</body>
+</html>
