@@ -1,19 +1,6 @@
 // Navigation bar with language toggle + mobile drawer
 const { useState, useEffect } = React;
 
-// Shared lang state with localStorage persistence — used by all page apps
-window.useLang = function useLang(initial = 'tr') {
-  const [lang, setLangState] = useState(() => {
-    try { return localStorage.getItem('atempo_lang') || initial; }
-    catch (e) { return initial; }
-  });
-  const setLang = (l) => {
-    setLangState(l);
-    try { localStorage.setItem('atempo_lang', l); } catch (e) {}
-  };
-  return [lang, setLang];
-};
-
 function Nav({ lang, setLang, t }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);

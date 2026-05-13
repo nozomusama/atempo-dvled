@@ -391,3 +391,18 @@ const I18N = {
 };
 
 window.I18N = I18N;
+
+// Shared lang state with localStorage persistence.
+// Defined here (i18n.jsx — loaded first in every page) so all App components
+// can call it without depending on later script loading order.
+window.useLang = function useLang(initial) {
+  const [lang, setLangState] = React.useState(() => {
+    try { return localStorage.getItem('atempo_lang') || initial || 'tr'; }
+    catch (e) { return initial || 'tr'; }
+  });
+  const setLang = (l) => {
+    setLangState(l);
+    try { localStorage.setItem('atempo_lang', l); } catch (e) {}
+  };
+  return [lang, setLang];
+};
