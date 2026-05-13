@@ -2,7 +2,7 @@
 const { useState, useEffect } = React;
 
 function App() {
-  const [lang, setLang] = useState(window.TWEAKS?.language || 'tr');
+  const [lang, setLang] = window.useLang(window.TWEAKS?.language || 'tr');
   const [tweaks, setTweaks] = useState(window.TWEAKS || {});
   const [editMode, setEditMode] = useState(false);
   const [quotePrefill, setQuotePrefill] = useState(null);
@@ -113,6 +113,7 @@ function App() {
       <Compare t={t} />
       <SpecTable t={t} lang={lang} />
       <Projects t={t} />
+      <Trust t={t} />
       <Quote t={t} lang={lang} prefill={quotePrefill} onConsumePrefill={() => setQuotePrefill(null)} />
       <Footer t={t} />
       <WhatsApp lang={lang} />

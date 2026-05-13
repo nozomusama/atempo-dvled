@@ -70,48 +70,111 @@ const SERIES_COLORS = {
   AX:'#E6007E', BX:'#00E5FF', CX:'#6A5ACD', DX:'#FF6A00', EX:'#FFB020', FX:'#9333EA', ALL:'#E6007E',
 };
 
-const DOWNLOADS_TR = [
-  // Teknik Broşürler
-  { id:1, cat:'brochure', series:'AX', title:'AX IndoorFine — Ürün Broşürü', desc:'COB mikro-pitch iç mekan serisi. Kontrol odası ve kurumsal lobbiler.', type:'PDF', size:'4.2 MB', version:'v3.1', date:'2025-11', lang:'TR/EN' },
-  { id:2, cat:'brochure', series:'BX', title:'BX Broadcast — Ürün Broşürü', desc:'Broadcast ve XR sanal set serisi. Kamera-uyumlu, 7680 Hz refresh.', type:'PDF', size:'5.8 MB', version:'v2.4', date:'2026-01', lang:'TR/EN' },
-  { id:3, cat:'brochure', series:'CX', title:'CX Corporate — Ürün Broşürü', desc:'Auditorium ve konferans salonu LED video duvarı serisi.', type:'PDF', size:'3.9 MB', version:'v2.0', date:'2025-10', lang:'TR/EN' },
-  { id:4, cat:'brochure', series:'DX', title:'DX Stage — Ürün Broşürü', desc:'Etkinlik ve konser için touring kiralama serisi. IP54, 4500 nit.', type:'PDF', size:'4.4 MB', version:'v1.8', date:'2025-09', lang:'TR/EN' },
-  { id:5, cat:'brochure', series:'EX', title:'EX Outdoor — Ürün Broşürü', desc:'IP65 dış mekan digital signage ve DOOH serisi. 6000 nit.', type:'PDF', size:'5.1 MB', version:'v2.2', date:'2025-12', lang:'TR/EN' },
-  { id:6, cat:'brochure', series:'FX', title:'FX Creative — Ürün Broşürü', desc:'Esnek, kavisli ve şekilli LED modül serisi. Sütun, zemin, tavan.', type:'PDF', size:'6.3 MB', version:'v1.5', date:'2026-01', lang:'TR/EN' },
-  { id:7, cat:'brochure', series:'ALL', title:'Atempo DirectView LED — Genel Katalog 2026', desc:'Tüm seri ve ürünlerin genel bakışı, karşılaştırma tablosu ve referanslar.', type:'PDF', size:'18.7 MB', version:'2026 Ed.', date:'2026-02', lang:'TR/EN' },
-  // Teknik Çizimler
-  { id:8, cat:'drawing', series:'AX', title:'AX Serisi — Montaj ve Boyut Çizimleri', desc:'Modül boyutları, dolap çizimi, montaj detayları. DXF + PDF.', type:'DXF+PDF', size:'2.1 MB', version:'r4', date:'2025-11', lang:'-' },
-  { id:9, cat:'drawing', series:'BX', title:'BX Serisi — Montaj ve Boyut Çizimleri', desc:'Flybar, kutu ve modül boyutları. DXF + PDF.', type:'DXF+PDF', size:'1.9 MB', version:'r3', date:'2025-10', lang:'-' },
-  { id:10, cat:'drawing', series:'CX', title:'CX Serisi — Montaj ve Boyut Çizimleri', desc:'Duvar ve raf montaj detayları. DXF + PDF.', type:'DXF+PDF', size:'1.7 MB', version:'r2', date:'2025-08', lang:'-' },
-  { id:11, cat:'drawing', series:'DX', title:'DX Serisi — Rigging ve Montaj Çizimleri', desc:'Flybar, touring case boyutları. Yük hesabı notları dahil.', type:'DXF+PDF', size:'3.2 MB', version:'r5', date:'2025-12', lang:'-' },
-  { id:12, cat:'drawing', series:'EX', title:'EX Serisi — Dış Mekan Kurulum Çizimleri', desc:'Hava koşullarına dayanıklı kasa, kablo giriş detayları.', type:'DXF+PDF', size:'2.8 MB', version:'r3', date:'2025-11', lang:'-' },
-  { id:13, cat:'drawing', series:'ALL', title:'Standart Video Duvarı Elektrik Şeması', desc:'Tipik kurulum için güç dağıtımı ve bağlantı şeması.', type:'PDF', size:'1.1 MB', version:'r6', date:'2025-07', lang:'-' },
-  // Yazılımlar
-  { id:14, cat:'software', series:'ALL', title:'NovaLCT LED Kontrolör Yazılımı', desc:'LED panel kalibrasyonu, renk ayarı ve kontrol. Windows 10/11.', type:'EXE', size:'248 MB', version:'v5.4.2', date:'2025-12', lang:'TR/EN/DE' },
-  { id:15, cat:'software', series:'ALL', title:'Atempo LED Manager', desc:'Sahne kurulum yönetimi, gruplama, zamanlama ve içerik yönetimi.', type:'EXE', size:'87 MB', version:'v2.1.0', date:'2026-01', lang:'TR/EN' },
-  { id:16, cat:'software', series:'ALL', title:'ColorGenie Kalibrasyon Yazılımı', desc:'Gelişmiş renk ve parlaklık kalibrasyonu. Spektrofotometre desteği.', type:'EXE', size:'142 MB', version:'v3.0.1', date:'2025-10', lang:'EN' },
-  { id:17, cat:'software', series:'ALL', title:'Sürücü Paketi — Windows 10/11', desc:'LED kontrol kartı USB ve ethernet sürücüleri.', type:'ZIP', size:'12 MB', version:'v2024.11', date:'2024-11', lang:'-' },
+// Each item has bilingual title/desc; static meta (cat, series, type, size, version, date, lang) stays language-neutral
+const DOWNLOADS = [
+  // Brochures
+  { id:1, cat:'brochure', series:'AX', type:'PDF', size:'4.2 MB', version:'v3.1', date:'2025-11', lang:'TR/EN',
+    title: { tr:'AX IndoorFine — Ürün Broşürü', en:'AX IndoorFine — Product Brochure' },
+    desc:  { tr:'COB mikro-pitch iç mekan serisi. Kontrol odası ve kurumsal lobbiler.', en:'COB micro-pitch indoor series. Control rooms and corporate lobbies.' } },
+  { id:2, cat:'brochure', series:'BX', type:'PDF', size:'5.8 MB', version:'v2.4', date:'2026-01', lang:'TR/EN',
+    title: { tr:'BX Broadcast — Ürün Broşürü', en:'BX Broadcast — Product Brochure' },
+    desc:  { tr:'Broadcast ve XR sanal set serisi. Kamera-uyumlu, 7680 Hz refresh.', en:'Broadcast and XR virtual set series. Camera-matched, 7680 Hz refresh.' } },
+  { id:3, cat:'brochure', series:'CX', type:'PDF', size:'3.9 MB', version:'v2.0', date:'2025-10', lang:'TR/EN',
+    title: { tr:'CX Corporate — Ürün Broşürü', en:'CX Corporate — Product Brochure' },
+    desc:  { tr:'Auditorium ve konferans salonu LED video duvarı serisi.', en:'LED video wall series for auditoriums and conference halls.' } },
+  { id:4, cat:'brochure', series:'DX', type:'PDF', size:'4.4 MB', version:'v1.8', date:'2025-09', lang:'TR/EN',
+    title: { tr:'DX Stage — Ürün Broşürü', en:'DX Stage — Product Brochure' },
+    desc:  { tr:'Etkinlik ve konser için touring kiralama serisi. IP54, 4500 nit.', en:'Touring rental series for events and concerts. IP54, 4500 nit.' } },
+  { id:5, cat:'brochure', series:'EX', type:'PDF', size:'5.1 MB', version:'v2.2', date:'2025-12', lang:'TR/EN',
+    title: { tr:'EX Outdoor — Ürün Broşürü', en:'EX Outdoor — Product Brochure' },
+    desc:  { tr:'IP65 dış mekan digital signage ve DOOH serisi. 6000 nit.', en:'IP65 outdoor digital signage and DOOH series. 6000 nit.' } },
+  { id:6, cat:'brochure', series:'FX', type:'PDF', size:'6.3 MB', version:'v1.5', date:'2026-01', lang:'TR/EN',
+    title: { tr:'FX Creative — Ürün Broşürü', en:'FX Creative — Product Brochure' },
+    desc:  { tr:'Esnek, kavisli ve şekilli LED modül serisi. Sütun, zemin, tavan.', en:'Flexible, curved and shaped LED module series. Column, floor, ceiling.' } },
+  { id:7, cat:'brochure', series:'ALL', type:'PDF', size:'18.7 MB', version:'2026 Ed.', date:'2026-02', lang:'TR/EN',
+    title: { tr:'Atempo DirectView LED — Genel Katalog 2026', en:'Atempo DirectView LED — General Catalog 2026' },
+    desc:  { tr:'Tüm seri ve ürünlerin genel bakışı, karşılaştırma tablosu ve referanslar.', en:'Overview of all series and products, comparison table and references.' } },
+  // Drawings
+  { id:8, cat:'drawing', series:'AX', type:'DXF+PDF', size:'2.1 MB', version:'r4', date:'2025-11', lang:'-',
+    title: { tr:'AX Serisi — Montaj ve Boyut Çizimleri', en:'AX Series — Mounting & Dimension Drawings' },
+    desc:  { tr:'Modül boyutları, dolap çizimi, montaj detayları. DXF + PDF.', en:'Module dimensions, cabinet drawings, mounting details. DXF + PDF.' } },
+  { id:9, cat:'drawing', series:'BX', type:'DXF+PDF', size:'1.9 MB', version:'r3', date:'2025-10', lang:'-',
+    title: { tr:'BX Serisi — Montaj ve Boyut Çizimleri', en:'BX Series — Mounting & Dimension Drawings' },
+    desc:  { tr:'Flybar, kutu ve modül boyutları. DXF + PDF.', en:'Flybar, cabinet and module dimensions. DXF + PDF.' } },
+  { id:10, cat:'drawing', series:'CX', type:'DXF+PDF', size:'1.7 MB', version:'r2', date:'2025-08', lang:'-',
+    title: { tr:'CX Serisi — Montaj ve Boyut Çizimleri', en:'CX Series — Mounting & Dimension Drawings' },
+    desc:  { tr:'Duvar ve raf montaj detayları. DXF + PDF.', en:'Wall and rack mounting details. DXF + PDF.' } },
+  { id:11, cat:'drawing', series:'DX', type:'DXF+PDF', size:'3.2 MB', version:'r5', date:'2025-12', lang:'-',
+    title: { tr:'DX Serisi — Rigging ve Montaj Çizimleri', en:'DX Series — Rigging & Mounting Drawings' },
+    desc:  { tr:'Flybar, touring case boyutları. Yük hesabı notları dahil.', en:'Flybar, touring case dimensions. Load calculation notes included.' } },
+  { id:12, cat:'drawing', series:'EX', type:'DXF+PDF', size:'2.8 MB', version:'r3', date:'2025-11', lang:'-',
+    title: { tr:'EX Serisi — Dış Mekan Kurulum Çizimleri', en:'EX Series — Outdoor Installation Drawings' },
+    desc:  { tr:'Hava koşullarına dayanıklı kasa, kablo giriş detayları.', en:'Weather-resistant cabinet, cable entry details.' } },
+  { id:13, cat:'drawing', series:'ALL', type:'PDF', size:'1.1 MB', version:'r6', date:'2025-07', lang:'-',
+    title: { tr:'Standart Video Duvarı Elektrik Şeması', en:'Standard Video Wall Wiring Diagram' },
+    desc:  { tr:'Tipik kurulum için güç dağıtımı ve bağlantı şeması.', en:'Power distribution and connection diagram for typical installations.' } },
+  // Software
+  { id:14, cat:'software', series:'ALL', type:'EXE', size:'248 MB', version:'v5.4.2', date:'2025-12', lang:'TR/EN/DE',
+    title: { tr:'NovaLCT LED Kontrolör Yazılımı', en:'NovaLCT LED Controller Software' },
+    desc:  { tr:'LED panel kalibrasyonu, renk ayarı ve kontrol. Windows 10/11.', en:'LED panel calibration, color tuning and control. Windows 10/11.' } },
+  { id:15, cat:'software', series:'ALL', type:'EXE', size:'87 MB', version:'v2.1.0', date:'2026-01', lang:'TR/EN',
+    title: { tr:'Atempo LED Manager', en:'Atempo LED Manager' },
+    desc:  { tr:'Sahne kurulum yönetimi, gruplama, zamanlama ve içerik yönetimi.', en:'Stage setup, grouping, scheduling and content management.' } },
+  { id:16, cat:'software', series:'ALL', type:'EXE', size:'142 MB', version:'v3.0.1', date:'2025-10', lang:'EN',
+    title: { tr:'ColorGenie Kalibrasyon Yazılımı', en:'ColorGenie Calibration Software' },
+    desc:  { tr:'Gelişmiş renk ve parlaklık kalibrasyonu. Spektrofotometre desteği.', en:'Advanced color and brightness calibration. Spectrophotometer support.' } },
+  { id:17, cat:'software', series:'ALL', type:'ZIP', size:'12 MB', version:'v2024.11', date:'2024-11', lang:'-',
+    title: { tr:'Sürücü Paketi — Windows 10/11', en:'Driver Pack — Windows 10/11' },
+    desc:  { tr:'LED kontrol kartı USB ve ethernet sürücüleri.', en:'LED control board USB and ethernet drivers.' } },
   // Firmware
-  { id:18, cat:'firmware', series:'AX', title:'AX Serisi — Alıcı Kartı Firmware', desc:'Performans ve kararlılık güncellemeleri. Release notları dahil.', type:'BIN', size:'8.4 MB', version:'v6.2.1', date:'2025-12', lang:'-' },
-  { id:19, cat:'firmware', series:'BX', title:'BX Serisi — Broadcast Kart Firmware', desc:'Genlock ve tracking stabilite iyileştirmeleri.', type:'BIN', size:'9.1 MB', version:'v4.3.0', date:'2026-01', lang:'-' },
-  { id:20, cat:'firmware', series:'CX', title:'CX/DX/FX — Alıcı Kartı Firmware', desc:'Ortak platform kartları için toplu firmware paketi.', type:'BIN', size:'7.8 MB', version:'v5.8.4', date:'2025-11', lang:'-' },
-  { id:21, cat:'firmware', series:'EX', title:'EX Serisi — Outdoor Kontrol Firmware', desc:'Sıcaklık yönetimi ve otomatik parlaklık algoritması güncellemesi.', type:'BIN', size:'6.2 MB', version:'v3.1.2', date:'2025-09', lang:'-' },
-  { id:22, cat:'firmware', series:'ALL', title:'MCTRL Kontrol Kutusu Firmware', desc:'Tüm seri uyumlu video kontrol birimi firmware.', type:'BIN', size:'14.3 MB', version:'v9.0.3', date:'2025-12', lang:'-' },
-  // Ürün Fotoğrafları
-  { id:23, cat:'photo', series:'AX', title:'AX IndoorFine — Ürün Fotoğrafları', desc:'Stüdyo ve kurulum fotoğrafları. Modül, kasa, kontrol kartı. 300 DPI.', type:'ZIP', size:'142 MB', version:'2026', date:'2026-01', lang:'-' },
-  { id:24, cat:'photo', series:'BX', title:'BX Broadcast — Stüdyo Fotoğrafları', desc:'XR stüdyo kurulum, close-up modül ve panel fotoğrafları.', type:'ZIP', size:'186 MB', version:'2026', date:'2026-01', lang:'-' },
-  { id:25, cat:'photo', series:'CX', title:'CX Corporate — Kurulum Fotoğrafları', desc:'Kurumsal referans kurulumlarından yüksek çözünürlüklü görseller.', type:'ZIP', size:'98 MB', version:'2025', date:'2025-10', lang:'-' },
-  { id:26, cat:'photo', series:'DX', title:'DX Stage — Etkinlik Fotoğrafları', desc:'Konser ve festival kurulumlarından sahne fotoğrafları.', type:'ZIP', size:'224 MB', version:'2025', date:'2025-09', lang:'-' },
-  { id:27, cat:'photo', series:'ALL', title:'Atempo DirectView LED — Basın Kiti', desc:'Logo, marka görselleri, ürün fotoğrafları ve açıklama metinleri. Tüm seriler.', type:'ZIP', size:'312 MB', version:'2026', date:'2026-02', lang:'-' },
+  { id:18, cat:'firmware', series:'AX', type:'BIN', size:'8.4 MB', version:'v6.2.1', date:'2025-12', lang:'-',
+    title: { tr:'AX Serisi — Alıcı Kartı Firmware', en:'AX Series — Receiver Card Firmware' },
+    desc:  { tr:'Performans ve kararlılık güncellemeleri. Release notları dahil.', en:'Performance and stability updates. Release notes included.' } },
+  { id:19, cat:'firmware', series:'BX', type:'BIN', size:'9.1 MB', version:'v4.3.0', date:'2026-01', lang:'-',
+    title: { tr:'BX Serisi — Broadcast Kart Firmware', en:'BX Series — Broadcast Card Firmware' },
+    desc:  { tr:'Genlock ve tracking stabilite iyileştirmeleri.', en:'Genlock and tracking stability improvements.' } },
+  { id:20, cat:'firmware', series:'CX', type:'BIN', size:'7.8 MB', version:'v5.8.4', date:'2025-11', lang:'-',
+    title: { tr:'CX/DX/FX — Alıcı Kartı Firmware', en:'CX/DX/FX — Receiver Card Firmware' },
+    desc:  { tr:'Ortak platform kartları için toplu firmware paketi.', en:'Combined firmware package for shared-platform cards.' } },
+  { id:21, cat:'firmware', series:'EX', type:'BIN', size:'6.2 MB', version:'v3.1.2', date:'2025-09', lang:'-',
+    title: { tr:'EX Serisi — Outdoor Kontrol Firmware', en:'EX Series — Outdoor Control Firmware' },
+    desc:  { tr:'Sıcaklık yönetimi ve otomatik parlaklık algoritması güncellemesi.', en:'Thermal management and auto-brightness algorithm update.' } },
+  { id:22, cat:'firmware', series:'ALL', type:'BIN', size:'14.3 MB', version:'v9.0.3', date:'2025-12', lang:'-',
+    title: { tr:'MCTRL Kontrol Kutusu Firmware', en:'MCTRL Control Box Firmware' },
+    desc:  { tr:'Tüm seri uyumlu video kontrol birimi firmware.', en:'Video control unit firmware compatible with all series.' } },
+  // Photos
+  { id:23, cat:'photo', series:'AX', type:'ZIP', size:'142 MB', version:'2026', date:'2026-01', lang:'-',
+    title: { tr:'AX IndoorFine — Ürün Fotoğrafları', en:'AX IndoorFine — Product Photos' },
+    desc:  { tr:'Stüdyo ve kurulum fotoğrafları. Modül, kasa, kontrol kartı. 300 DPI.', en:'Studio and installation photos. Module, cabinet, controller. 300 DPI.' } },
+  { id:24, cat:'photo', series:'BX', type:'ZIP', size:'186 MB', version:'2026', date:'2026-01', lang:'-',
+    title: { tr:'BX Broadcast — Stüdyo Fotoğrafları', en:'BX Broadcast — Studio Photos' },
+    desc:  { tr:'XR stüdyo kurulum, close-up modül ve panel fotoğrafları.', en:'XR studio installations, close-up module and panel photos.' } },
+  { id:25, cat:'photo', series:'CX', type:'ZIP', size:'98 MB', version:'2025', date:'2025-10', lang:'-',
+    title: { tr:'CX Corporate — Kurulum Fotoğrafları', en:'CX Corporate — Installation Photos' },
+    desc:  { tr:'Kurumsal referans kurulumlarından yüksek çözünürlüklü görseller.', en:'High-resolution shots from corporate reference installations.' } },
+  { id:26, cat:'photo', series:'DX', type:'ZIP', size:'224 MB', version:'2025', date:'2025-09', lang:'-',
+    title: { tr:'DX Stage — Etkinlik Fotoğrafları', en:'DX Stage — Event Photos' },
+    desc:  { tr:'Konser ve festival kurulumlarından sahne fotoğrafları.', en:'Stage photos from concert and festival installations.' } },
+  { id:27, cat:'photo', series:'ALL', type:'ZIP', size:'312 MB', version:'2026', date:'2026-02', lang:'-',
+    title: { tr:'Atempo DirectView LED — Basın Kiti', en:'Atempo DirectView LED — Press Kit' },
+    desc:  { tr:'Logo, marka görselleri, ürün fotoğrafları ve açıklama metinleri. Tüm seriler.', en:'Logo, brand assets, product photos and copy. All series.' } },
 ];
 
-const CAT_META = {
-  brochure: { label:'Teknik Broşürler', icon: <BrochureIcon />, color:'#E6007E' },
-  drawing:  { label:'Teknik Çizimler', icon: <DrawingIcon />, color:'#00E5FF' },
-  software: { label:'Yazılımlar', icon: <SoftwareIcon />, color:'#6A5ACD' },
-  firmware: { label:'Firmware', icon: <FirmwareIcon />, color:'#FF6A00' },
-  photo:    { label:'Ürün Fotoğrafları', icon: <PhotoIcon />, color:'#9333EA' },
+const CAT_ICONS = {
+  brochure: <BrochureIcon />,
+  drawing:  <DrawingIcon />,
+  software: <SoftwareIcon />,
+  firmware: <FirmwareIcon />,
+  photo:    <PhotoIcon />,
 };
+const CAT_COLORS = {
+  brochure: '#E6007E',
+  drawing:  '#00E5FF',
+  software: '#6A5ACD',
+  firmware: '#FF6A00',
+  photo:    '#9333EA',
+};
+const CAT_KEYS = ['brochure', 'drawing', 'software', 'firmware', 'photo'];
 
 const SERIES_LIST = ['ALL','AX','BX','CX','DX','EX','FX'];
 
@@ -137,12 +200,13 @@ function DownloadIcon() {
 
 // ── MAIN ──────────────────────────────────────────────────────────────────────
 function DownloadsApp() {
-  const [lang, setLang] = useState('tr');
+  const [lang, setLang] = window.useLang('tr');
   const [activeCat, setActiveCat] = useState('all');
   const [activeSeries, setActiveSeries] = useState('ALL');
   const [search, setSearch] = useState('');
   const [toast, setToast] = useState('');
   const t = window.I18N[lang];
+  const td = t.downloads;
 
   const showToast = (msg) => {
     setToast(msg);
@@ -153,19 +217,21 @@ function DownloadsApp() {
     if (d.cat === 'brochure' && d.series !== 'ALL' && window.generateBrochure && window.PRODUCTS) {
       window.generateBrochure(window.PRODUCTS[d.series], lang).catch(console.error);
     } else {
-      showToast(lang === 'tr' ? 'Bu dosya yakında erişime açılacak.' : 'This file will be available soon.');
+      showToast(td.toastSoon);
     }
   };
 
   const filtered = useMemo(() => {
-    return DOWNLOADS_TR.filter(d => {
+    return DOWNLOADS.filter(d => {
       const catOk = activeCat === 'all' || d.cat === activeCat;
       const seriesOk = activeSeries === 'ALL' || d.series === activeSeries || d.series === 'ALL';
       const q = search.toLowerCase();
-      const searchOk = !q || d.title.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q);
+      const title = d.title[lang].toLowerCase();
+      const desc = d.desc[lang].toLowerCase();
+      const searchOk = !q || title.includes(q) || desc.includes(q);
       return catOk && seriesOk && searchOk;
     });
-  }, [activeCat, activeSeries, search]);
+  }, [activeCat, activeSeries, search, lang]);
 
   const grouped = useMemo(() => {
     const g = {};
@@ -206,14 +272,8 @@ function DownloadsApp() {
           background: 'radial-gradient(circle, rgba(230,0,126,0.2), transparent 70%)', filter: 'blur(60px)' }} />
         <div className="container" style={{ position: 'relative', zIndex: 2, paddingBottom: 64, paddingTop: 80 }}>
           <div className="eyebrow" style={{ marginBottom: 20 }}>Atempo DirectView LED</div>
-          <h1 className="display-xl" style={{ marginBottom: 20 }}>
-            {lang === 'tr' ? 'İndirmeler' : 'Downloads'}
-          </h1>
-          <p style={{ fontSize: 18, color: 'var(--text-1)', maxWidth: 560 }}>
-            {lang === 'tr'
-              ? 'Teknik broşürler, çizimler, yazılımlar, firmware ve ürün görselleri.'
-              : 'Technical brochures, drawings, software, firmware and product images.'}
-          </p>
+          <h1 className="display-xl" style={{ marginBottom: 20 }}>{td.title}</h1>
+          <p style={{ fontSize: 18, color: 'var(--text-1)', maxWidth: 560 }}>{td.lead}</p>
         </div>
       </section>
 
@@ -227,18 +287,18 @@ function DownloadsApp() {
             borderBottom: activeCat === 'all' ? '2px solid var(--magenta)' : '2px solid transparent',
             color: activeCat === 'all' ? 'var(--text-0)' : 'var(--text-2)',
             transition: 'all 0.15s',
-          }}>{lang === 'tr' ? 'Tümü' : 'All'}</button>
-          {Object.entries(CAT_META).map(([k, v]) => (
+          }}>{td.all}</button>
+          {CAT_KEYS.map((k) => (
             <button key={k} onClick={() => setActiveCat(k)} style={{
               padding: '0 20px', height: '100%', fontFamily: 'var(--font-mono)', fontSize: 11,
               letterSpacing: '0.15em', textTransform: 'uppercase', whiteSpace: 'nowrap',
               display: 'flex', alignItems: 'center', gap: 8,
-              borderBottom: activeCat === k ? `2px solid ${v.color}` : '2px solid transparent',
+              borderBottom: activeCat === k ? `2px solid ${CAT_COLORS[k]}` : '2px solid transparent',
               color: activeCat === k ? 'var(--text-0)' : 'var(--text-2)',
               transition: 'all 0.15s',
             }}>
-              <span style={{ color: activeCat === k ? v.color : 'inherit' }}>{v.icon}</span>
-              {v.label}
+              <span style={{ color: activeCat === k ? CAT_COLORS[k] : 'inherit' }}>{CAT_ICONS[k]}</span>
+              {td.categories[k]}
             </button>
           ))}
 
@@ -248,7 +308,7 @@ function DownloadsApp() {
           {/* Search */}
           <div style={{ position: 'relative', flexShrink: 0 }}>
             <input value={search} onChange={e => setSearch(e.target.value)}
-              placeholder={lang === 'tr' ? 'Ara...' : 'Search...'}
+              placeholder={td.searchPlaceholder}
               style={{
                 background: 'var(--bg-2)', border: '1px solid var(--line-strong)',
                 color: 'var(--text-0)', padding: '8px 16px 8px 36px',
@@ -274,10 +334,10 @@ function DownloadsApp() {
               background: activeSeries === s ? `${SERIES_COLORS[s]}18` : 'transparent',
               color: activeSeries === s ? 'var(--text-0)' : 'var(--text-2)',
               transition: 'all 0.15s',
-            }}>{s === 'ALL' ? (lang === 'tr' ? 'Tüm Seriler' : 'All Series') : s + ' Serisi'}</button>
+            }}>{s === 'ALL' ? td.allSeries : s + td.seriesSuffix}</button>
           ))}
           <span className="mono" style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--text-3)', flexShrink: 0 }}>
-            {filtered.length} {lang === 'tr' ? 'dosya' : 'files'}
+            {filtered.length} {td.fileCount}
           </span>
         </div>
       </div>
@@ -285,20 +345,20 @@ function DownloadsApp() {
       {/* Content */}
       <div style={{ minHeight: '60vh', background: 'var(--bg-0)', padding: '48px 0 80px' }}>
         <div className="container">
-          {Object.keys(CAT_META).map(cat => {
+          {CAT_KEYS.map(cat => {
             const items = grouped[cat];
             if (!items || items.length === 0) return null;
-            const meta = CAT_META[cat];
+            const color = CAT_COLORS[cat];
             return (
               <div key={cat} style={{ marginBottom: 56 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24, paddingBottom: 16, borderBottom: '1px solid var(--line)' }}>
-                  <span style={{ color: meta.color }}>{meta.icon}</span>
-                  <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 500, letterSpacing: '-0.01em' }}>{meta.label}</h2>
-                  <span className="mono" style={{ fontSize: 10, color: 'var(--text-3)', letterSpacing: '0.2em', marginLeft: 4 }}>{items.length} DOSYA</span>
+                  <span style={{ color }}>{CAT_ICONS[cat]}</span>
+                  <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 500, letterSpacing: '-0.01em' }}>{td.categories[cat]}</h2>
+                  <span className="mono" style={{ fontSize: 10, color: 'var(--text-3)', letterSpacing: '0.2em', marginLeft: 4 }}>{items.length} {td.fileCountUpper}</span>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }}>
                   {items.map(d => (
-                    <DownloadCard key={d.id} d={d} meta={meta} lang={lang} onDownload={handleDownload} />
+                    <DownloadCard key={d.id} d={d} catColor={color} lang={lang} td={td} onDownload={handleDownload} />
                   ))}
                 </div>
               </div>
@@ -306,13 +366,9 @@ function DownloadsApp() {
           })}
           {filtered.length === 0 && (
             <div style={{ textAlign: 'center', padding: '80px 0', color: 'var(--text-3)' }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: '0.2em', marginBottom: 16 }}>
-                {lang === 'tr' ? 'SONUÇ BULUNAMADI' : 'NO RESULTS FOUND'}
-              </div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: '0.2em', marginBottom: 16 }}>{td.noResults}</div>
               <button onClick={() => { setSearch(''); setActiveCat('all'); setActiveSeries('ALL'); }}
-                className="btn btn-ghost" style={{ fontSize: 13 }}>
-                {lang === 'tr' ? 'Filtreleri temizle' : 'Clear filters'}
-              </button>
+                className="btn btn-ghost" style={{ fontSize: 13 }}>{td.clearFilters}</button>
             </div>
           )}
         </div>
@@ -324,7 +380,7 @@ function DownloadsApp() {
   );
 }
 
-function DownloadCard({ d, meta, lang, onDownload }) {
+function DownloadCard({ d, catColor, lang, td, onDownload }) {
   const [hover, setHover] = useState(false);
   const seriesColor = SERIES_COLORS[d.series] || 'var(--magenta)';
 
@@ -354,12 +410,12 @@ function DownloadCard({ d, meta, lang, onDownload }) {
               letterSpacing: '0.18em', color: 'var(--text-3)', textTransform: 'uppercase',
             }}>{d.type}</span>
           </div>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 500, letterSpacing: '-0.01em', lineHeight: 1.3 }}>{d.title}</div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 500, letterSpacing: '-0.01em', lineHeight: 1.3 }}>{d.title[lang]}</div>
         </div>
       </div>
 
       {/* Desc */}
-      <p style={{ fontSize: 13, color: 'var(--text-1)', lineHeight: 1.5 }}>{d.desc}</p>
+      <p style={{ fontSize: 13, color: 'var(--text-1)', lineHeight: 1.5 }}>{d.desc[lang]}</p>
 
       {/* Meta row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 4 }}>
@@ -373,15 +429,15 @@ function DownloadCard({ d, meta, lang, onDownload }) {
         <button style={{
           display: 'flex', alignItems: 'center', gap: 6,
           padding: '8px 14px',
-          background: hover ? meta.color : 'transparent',
-          border: `1px solid ${hover ? meta.color : 'var(--line-strong)'}`,
+          background: hover ? catColor : 'transparent',
+          border: `1px solid ${hover ? catColor : 'var(--line-strong)'}`,
           color: hover ? 'white' : 'var(--text-1)',
           fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.15em',
           transition: 'all 0.2s',
         }}
         onClick={() => onDownload(d)}>
           <DownloadIcon />
-          {lang === 'tr' ? 'İNDİR' : 'DOWNLOAD'}
+          {td.download}
         </button>
       </div>
     </div>

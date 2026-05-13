@@ -84,6 +84,8 @@ function ProductHero({ product, lang, pt, onDownload }) {
               <img
                 src={product.images[view]}
                 alt={`${product.name} ${view} view`}
+                loading="lazy"
+                decoding="async"
                 style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
               />
             </div>

@@ -67,7 +67,7 @@ const { useState, useEffect } = React;
 
 // ── SUPPORT FORM ──────────────────────────────────────────────────────────────
 function SupportApp() {
-  const [lang, setLang] = useState('tr');
+  const [lang, setLang] = window.useLang('tr');
   const t = window.I18N[lang];
   const [submitted, setSubmitted] = useState(false);
 

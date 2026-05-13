@@ -5,7 +5,7 @@ function ProductApp() {
   const params = new URLSearchParams(window.location.search);
   const seriesCode = (params.get('series') || 'AX').toUpperCase();
   const product = window.PRODUCTS[seriesCode] || window.PRODUCTS.AX;
-  const [lang, setLang] = useState(window.TWEAKS?.language || 'tr');
+  const [lang, setLang] = window.useLang(window.TWEAKS?.language || 'tr');
   const t = window.I18N[lang];
   const pt = window.P_I18N[lang];
 

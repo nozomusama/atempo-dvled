@@ -1,15 +1,33 @@
-// Navigation bar with language toggle
+// Navigation bar with language toggle + mobile drawer
 const { useState, useEffect } = React;
+
+// Shared lang state with localStorage persistence — used by all page apps
+window.useLang = function useLang(initial = 'tr') {
+  const [lang, setLangState] = useState(() => {
+    try { return localStorage.getItem('atempo_lang') || initial; }
+    catch (e) { return initial; }
+  });
+  const setLang = (l) => {
+    setLangState(l);
+    try { localStorage.setItem('atempo_lang', l); } catch (e) {}
+  };
+  return [lang, setLang];
+};
 
 function Nav({ lang, setLang, t }) {
   const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
 
   // Detect if we're on a sub-page — prefix hash links with main page
   const isSubPage = !/DirectView%20LED\.html$|DirectView LED\.html$|index\.html$|\/$/i.test(window.location.pathname);
@@ -28,10 +46,10 @@ function Nav({ lang, setLang, t }) {
   return (
     <nav style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-      background: scrolled ? 'rgba(5, 6, 10, 0.78)' : 'transparent',
-      backdropFilter: scrolled ? 'blur(16px) saturate(140%)' : 'none',
-      WebkitBackdropFilter: scrolled ? 'blur(16px) saturate(140%)' : 'none',
-      borderBottom: scrolled ? '1px solid var(--line)' : '1px solid transparent',
+      background: scrolled || menuOpen ? 'rgba(5, 6, 10, 0.78)' : 'transparent',
+      backdropFilter: scrolled || menuOpen ? 'blur(16px) saturate(140%)' : 'none',
+      WebkitBackdropFilter: scrolled || menuOpen ? 'blur(16px) saturate(140%)' : 'none',
+      borderBottom: scrolled || menuOpen ? '1px solid var(--line)' : '1px solid transparent',
       transition: 'all 0.3s ease',
     }}>
       <div className="container" style={{
@@ -79,12 +97,74 @@ function Nav({ lang, setLang, t }) {
               }}>{l.toUpperCase()}</button>
             ))}
           </div>
-          <a href={prefix + '#contact'} className="btn btn-primary" style={{ padding: '10px 18px', fontSize: 13 }}>{t.nav.quote}</a>
+          <a href={prefix + '#contact'} className="btn btn-primary nav-cta" style={{ padding: '10px 18px', fontSize: 13 }}>{t.nav.quote}</a>
+          <button
+            className="nav-burger"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            onClick={() => setMenuOpen(o => !o)}
+            style={{
+              display: 'none',
+              width: 40, height: 40,
+              border: '1px solid var(--line-strong)',
+              borderRadius: 2,
+              alignItems: 'center', justifyContent: 'center',
+              flexDirection: 'column', gap: 4,
+            }}
+          >
+            <span style={{ width: 18, height: 1.5, background: 'var(--text-0)', transition: 'transform 0.2s', transform: menuOpen ? 'translateY(3px) rotate(45deg)' : 'none' }} />
+            <span style={{ width: 18, height: 1.5, background: 'var(--text-0)', opacity: menuOpen ? 0 : 1, transition: 'opacity 0.2s' }} />
+            <span style={{ width: 18, height: 1.5, background: 'var(--text-0)', transition: 'transform 0.2s', transform: menuOpen ? 'translateY(-3px) rotate(-45deg)' : 'none' }} />
+          </button>
         </div>
       </div>
+
+      {/* Mobile drawer */}
+      <div
+        className="nav-drawer"
+        style={{
+          position: 'fixed', top: 72, left: 0, right: 0, bottom: 0,
+          background: 'rgba(5, 6, 10, 0.96)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          display: menuOpen ? 'flex' : 'none',
+          flexDirection: 'column',
+          padding: '40px 32px',
+          gap: 4,
+          overflowY: 'auto',
+        }}
+      >
+        {links.map(l => (
+          <a key={l.href} href={l.href} onClick={() => setMenuOpen(false)} style={{
+            display: 'block',
+            padding: '18px 0',
+            fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 500,
+            letterSpacing: '-0.01em',
+            color: 'var(--text-0)',
+            borderBottom: '1px solid var(--line)',
+          }}>{l.label}</a>
+        ))}
+        <a
+          href="https://wa.me/905551234567"
+          target="_blank"
+          rel="noopener"
+          style={{
+            marginTop: 24,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            gap: 10, padding: '14px 22px',
+            background: '#25D366', color: 'white',
+            fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 500,
+            borderRadius: 2,
+          }}
+        >
+          WhatsApp · {lang === 'tr' ? 'Hemen ileti gönder' : 'Message us now'}
+        </a>
+      </div>
+
       <style>{`
         @media (max-width: 1100px) {
           .nav-links { display: none !important; }
+          .nav-cta { display: none !important; }
+          .nav-burger { display: flex !important; }
         }
       `}</style>
     </nav>
