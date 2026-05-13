@@ -299,7 +299,7 @@ function DownloadsApp() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }}>
                   {items.map(d => (
-                    <DownloadCard key={d.id} d={d} meta={meta} lang={lang} />
+                    <DownloadCard key={d.id} d={d} meta={meta} lang={lang} onDownload={handleDownload} />
                   ))}
                 </div>
               </div>
@@ -325,7 +325,7 @@ function DownloadsApp() {
   );
 }
 
-function DownloadCard({ d, meta, lang }) {
+function DownloadCard({ d, meta, lang, onDownload }) {
   const [hover, setHover] = useState(false);
   const seriesColor = SERIES_COLORS[d.series] || 'var(--magenta)';
 
@@ -380,7 +380,7 @@ function DownloadCard({ d, meta, lang }) {
           fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.15em',
           transition: 'all 0.2s',
         }}
-        onClick={() => handleDownload(d)}>
+        onClick={() => onDownload(d)}>
           <DownloadIcon />
           {lang === 'tr' ? 'İNDİR' : 'DOWNLOAD'}
         </button>
