@@ -245,6 +245,7 @@ function HeroSlide({ slide, active, t }) {
             background: `linear-gradient(95deg, ${slide.accent}, ${slide.accent2})`,
             WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent',
             fontStyle: 'italic', fontWeight: 300,
+            display: 'inline-block', paddingRight: '0.15em',
           }}>{slide.title2}</span>
           <span style={{ color: 'var(--text-0)' }}> {slide.title3}</span>
         </h1>
